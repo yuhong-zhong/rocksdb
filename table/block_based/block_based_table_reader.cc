@@ -2100,6 +2100,7 @@ InternalIterator* BlockBasedTable::NewIterator(
     lifeTimeStream << (deathday - birthday) << std::endl;
     deathSize.fetch_add(this->rep_->table_properties->data_size);
     deathSizeStream << deathSize.load() << std::endl;
+    compactionStream << deathday << " " << this->rep_->table_properties->data_size << std::endl;
     lifeLock.unlock();
   }
   BlockCacheLookupContext lookup_context{caller};

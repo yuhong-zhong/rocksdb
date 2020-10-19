@@ -58,6 +58,7 @@ std::mutex lifeLock;
 std::ofstream lifeTimeStream("/tmp/rocksdb_life_time");
 std::atomic<long> deathSize(0);
 std::ofstream deathSizeStream("/tmp/rocksdb_death_size");
+std::ofstream compactionStream("/tmp/rocksdb_compaction");
 
 extern const std::string kHashIndexPrefixesBlock;
 extern const std::string kHashIndexPrefixesMetadataBlock;

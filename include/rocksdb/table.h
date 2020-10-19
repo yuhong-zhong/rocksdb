@@ -37,6 +37,7 @@ extern std::mutex lifeLock;
 extern std::ofstream lifeTimeStream;
 extern std::atomic<long> deathSize;
 extern std::ofstream deathSizeStream;
+extern std::ofstream compactionStream;
 
 // -- Block-based Table
 class FilterPolicy;
