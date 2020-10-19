@@ -20,6 +20,9 @@
 
 #include <memory>
 #include <string>
+#include <mutex>
+#include <atomic>
+#include <fstream>
 #include <unordered_map>
 
 #include "rocksdb/cache.h"
@@ -29,6 +32,11 @@
 #include "rocksdb/status.h"
 
 namespace ROCKSDB_NAMESPACE {
+
+extern std::mutex lifeLock;
+extern std::ofstream lifeTimeStream;
+extern std::atomic<long> deathSize;
+extern std::ofstream deathSizeStream;
 
 // -- Block-based Table
 class FilterPolicy;

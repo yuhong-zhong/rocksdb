@@ -18,6 +18,7 @@
 #include <string>
 #include <unordered_map>
 #include <utility>
+#include <chrono>
 
 #include "db/dbformat.h"
 #include "index_builder.h"
@@ -52,6 +53,11 @@
 #include "util/xxhash.h"
 
 namespace ROCKSDB_NAMESPACE {
+
+std::mutex lifeLock;
+std::ofstream lifeTimeStream("/tmp/rocksdb_life_time");
+std::atomic<long> deathSize(0);
+std::ofstream deathSizeStream("/tmp/rocksdb_death_size");
 
 extern const std::string kHashIndexPrefixesBlock;
 extern const std::string kHashIndexPrefixesMetadataBlock;
@@ -274,6 +280,13 @@ class BlockBasedTableBuilder::BlockBasedTablePropertiesCollector
                         whole_key_filtering_ ? kPropTrue : kPropFalse});
     properties->insert({BlockBasedTablePropertyNames::kPrefixFiltering,
                         prefix_filtering_ ? kPropTrue : kPropFalse});
+
+    auto now = std::chrono::system_clock::now();
+    auto now_sec = std::chrono::time_point_cast<std::chrono::seconds>(now);
+    auto epoch = now_sec.time_since_epoch();
+    long duration = epoch.count();
+    properties->insert({"birthday",
+                        std::to_string(duration)});
     return Status::OK();
   }
 

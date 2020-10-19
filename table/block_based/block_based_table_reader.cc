@@ -2088,6 +2088,20 @@ InternalIterator* BlockBasedTable::NewIterator(
     const ReadOptions& read_options, const SliceTransform* prefix_extractor,
     Arena* arena, bool skip_filters, TableReaderCaller caller,
     size_t compaction_readahead_size, bool allow_unprepared_value) {
+  if (caller == TableReaderCaller::kCompaction) {
+    long birthday = std::stol(this->rep_->table_properties->user_collected_properties.at("birthday"));
+
+    auto now = std::chrono::system_clock::now();
+    auto now_sec = std::chrono::time_point_cast<std::chrono::seconds>(now);
+    auto epoch = now_sec.time_since_epoch();
+    long deathday = epoch.count();
+
+    lifeLock.lock();
+    lifeTimeStream << (deathday - birthday) << std::endl;
+    deathSize.fetch_add(this->rep_->table_properties->data_size);
+    deathSizeStream << deathSize.load() << std::endl;
+    lifeLock.unlock();
+  }
   BlockCacheLookupContext lookup_context{caller};
   bool need_upper_bound_check =
       read_options.auto_prefix_mode ||
